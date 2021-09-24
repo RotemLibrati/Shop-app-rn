@@ -1,21 +1,32 @@
 import React from 'react';
-import { View, Text, StyleSheet, Button, Image } from 'react-native';
+import { View, Text, StyleSheet, Button, Image, TouchableOpacity, TouchableNativeFeedback, Platform } from 'react-native';
 import Color from '../../constants/Color';
 
 const ProductItem = props => {
-    return (<View style={styles.product}>
-        <View style={styles.imageContainer}>
-            <Image style={styles.image} source={{ uri: props.image }} />
+    let TouchableCmp = TouchableOpacity;
+    if (Platform.OS === 'android' && Platform.OS >= 21) {
+        TouchableCmp = TouchableNativeFeedback;
+    }
+    return (
+        <View style={styles.product}>
+            <View style={styles.touchable}>
+                <TouchableCmp onPress={props.onViewDetail}>
+                    <View>
+                        <View style={styles.imageContainer}>
+                            <Image style={styles.image} source={{ uri: props.image }} />
+                        </View>
+                        <View style={styles.details}>
+                            <Text style={styles.title} >{props.title}</Text>
+                            <Text style={styles.price}>${props.price.toFixed(2)}</Text>
+                        </View>
+                        <View style={styles.actions}>
+                            <Button color={Color.primary} title='View Details' onPress={props.onViewDetail} />
+                            <Button color={Color.primary} title='To Cart' onPress={props.onAddToCart} />
+                        </View>
+                    </View>
+                </TouchableCmp>
+            </View>
         </View>
-        <View style={styles.details}>
-            <Text style={styles.title} >{props.title}</Text>
-            <Text style={styles.price}>${props.price.toFixed(2)}</Text>
-        </View>
-        <View style={styles.actions}>
-            <Button color={Color.primary} title='View Details' onPress={props.onViewDetail} />
-            <Button color={Color.primary} title='To Cart' onPress={props.onAddToCart} />
-        </View>
-    </View>
     );
 };
 
@@ -31,7 +42,11 @@ const styles = StyleSheet.create({
         height: 300,
         margin: 20
     },
-    imageContainer:{
+    touchable: {
+        borderRadius: 10,
+        overflow: 'hidden'
+    },
+    imageContainer: {
         width: '100%',
         height: '60%',
         borderTopLeftRadius: 10,
